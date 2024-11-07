@@ -8,12 +8,12 @@
 
 using namespace std;
 
-int bfs(const vector<vector<bool>>& graph, int start) {
+vector<int> bfs(const vector<vector<bool>>& graph, int start) {
     int n = graph.size();
-    vector<int> distance(n, numeric_limits<int>::max());
+    vector<int> distances(n, numeric_limits<int>::max());
     queue<int> q;
 
-    distance[start] = 0;
+    distances[start] = 0;
     q.push(start);
 
     while (!q.empty()) {
@@ -21,39 +21,42 @@ int bfs(const vector<vector<bool>>& graph, int start) {
         q.pop();
 
         for (int i = 0; i < n; ++i) {
-            if (graph[node][i] && distance[i] == numeric_limits<int>::max()) {
-                distance[i] = distance[node] + 1;
+            if (graph[node][i] && distances[i] == numeric_limits<int>::max()) {
+                distances[i] = distances[node] + 1;
                 q.push(i);
             }
         }
     }
 
-    int max_distance = 0;
-    for (int dist : distance) {
-        if (dist != numeric_limits<int>::max()) {
-            max_distance = max(max_distance, dist);
+    return distances;
+}
+
+int calculate_diameter(const vector<vector<bool>>& graph) {
+    int n = graph.size();
+    int diameter = 0;
+
+    for (int i = 0; i < n; ++i) {
+        vector<int> distances = bfs(graph, i);
+        for (int d : distances) {
+            if (d != numeric_limits<int>::max()) {
+                diameter = max(diameter, d);
+            }
         }
     }
 
-    return max_distance;
-}
-
-int findGraphDiameter(const vector<vector<bool>>& graph) {
-    int diameter = 0;
-    for (int i = 0; i < graph.size(); ++i) {
-        diameter = max(diameter, bfs(graph, i));
-    }
     return diameter;
 }
+
+
 
 
 int main(){
 
     //inserimento grafo
-    int n, m, s;
+    int n, m;
     ifstream in("input.txt");
 
-    in>>n>>m>>s;
+    in>>n>>m;
 
     vector<vector<bool>> archi(n, vector<bool>(n,false));
 
@@ -65,11 +68,12 @@ int main(){
     } 
 
     //calcolo diametro
-    int diameter = findGraphDiameter(archi);
+    int diameter = calculate_diameter(archi);
     
     //stampa
     ofstream out("output.txt");
     out<<diameter<<endl;
+    cout << diameter << endl;
 
     return 0;
 }

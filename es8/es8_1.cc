@@ -10,7 +10,7 @@ void visita(int n, vector<vector<bool>> archi, vector<bool> &visitati, int s) {
     visitati[s] = true;
     cout<<s<<endl;
     for(int i = 0; i < archi[s].size(); i++) {
-        if(archi[s][i] && !visitati[i]) {
+        if((archi[s][i] || archi[i][s]) && !visitati[i]) {
             visita(n, archi, visitati, i);
         }
     }
@@ -26,7 +26,7 @@ int main(){
 
     vector<vector<bool>> archi(n);
     int n1 = n;
-    for (int i = 0; i < n; ++i , n1--) {
+    for (int i = 0; i < n; ++i , --n1) {
         archi[i].reserve(n1);
     }
     int partenza, arrivo;
